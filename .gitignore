@@ -134,3 +134,9 @@ dmypy.json
 .pytype/
 
 *.ipynb
+
+.vscode/
+
+alphavantage
+
+alphavantage-journal
