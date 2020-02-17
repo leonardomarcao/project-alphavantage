@@ -1,5 +1,6 @@
-from settings import *
+from .settings import *
 from os.path import join
 
-API_ALPHA_VANTAGE_URL = env('api_alpha_vantage_url')
+ALPHA_VANTAGE_API_URL = env('alpha_vantage_api_url')
 DATABASE_PATH = join(BASE_DIR, env('database_name'))
+ALPHA_VANTAGE_API_KEY = env('alpha_vantage_api_key')
