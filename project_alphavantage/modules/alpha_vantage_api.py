@@ -5,8 +5,8 @@ from project_alphavantage.config.base import (
     ALPHA_VANTAGE_API_URL
 )
 
-class AlphaVantageAPI:            
 
+class AlphaVantageAPI:
     def __init__(self):
         self.api_url = f'{ALPHA_VANTAGE_API_URL}'
 

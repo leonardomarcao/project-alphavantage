@@ -1,5 +1,4 @@
-from os.path import join, dirname, abspath
-from os import getenv
+from os.path import dirname, abspath
 from pathlib import Path
 from environs import Env
 
