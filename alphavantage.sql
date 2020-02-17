@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS `stock` (
 	`name`	TEXT NOT NULL,
 	`active`	INTEGER NOT NULL DEFAULT 1
 );
-INSERT INTO `stock` (id,symbol,name,active) VALUES (1,'B3SA3','B3SA3.SAO',1);
-INSERT INTO `stock` (id,symbol,name,active) VALUES (2,'PETR4','PETR4.SAO',1);
+INSERT INTO `stock` (id,symbol,name,active) VALUES (1,'B3SA3.SA','B3SA3.SAO',1);
+INSERT INTO `stock` (id,symbol,name,active) VALUES (2,'PETR4.SA','PETR4.SAO',1);
 CREATE UNIQUE INDEX IF NOT EXISTS `stock_imported_date_idx` ON `stock_import` (
 	`stock_id`,
 	`date`

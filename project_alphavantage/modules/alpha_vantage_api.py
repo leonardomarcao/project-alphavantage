@@ -27,5 +27,3 @@ class AlphaVantageAPI:
     @classmethod
     def api_key(cls):
         return ALPHA_VANTAGE_API_KEY
-    
-

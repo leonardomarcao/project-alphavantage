@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Float, ForeignKey, Index, Integer, Table, Text, text
+from sqlalchemy import Column, Float, ForeignKey, Index, Integer, Table, Text, text, and_
 from sqlalchemy.sql.sqltypes import NullType
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime
 from project_alphavantage.config.base import (
     BASE_DIR
@@ -42,11 +43,18 @@ class StockImport(Base):
     stock_id = Column(ForeignKey('stock.id'), nullable=False)
     stock = relationship('Stock')
     
-    def save_or_update_stock_imports(self, date: datetime.date, close: float, stock_id: int):
+    @staticmethod
+    def save_or_update_stock_imports(date: str, close: float, stock: Stock):
         Session = sessionmaker(bind=AlphaVantageDB(dbtype='sqlite', dbname='alphavantage').db_engine)        
         session = Session()
-        session.merge(StockImport(date=date, close=close, stock_id=stock_id))  
-        session.close()      
+        stock_import = session.query(StockImport).filter(and_(StockImport.date == date, StockImport.stock == stock))
+        try:
+            if stock_import.one():
+                stock_import.one().close = close            
+        except NoResultFound:
+            session.add(StockImport(date=date, close=close, stock=stock))
+        session.commit()
+        session.close()
 
 
 class AlphaVantageDB(object):
