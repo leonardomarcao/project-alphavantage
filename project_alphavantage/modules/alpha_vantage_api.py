@@ -14,7 +14,7 @@ class AlphaVantageAPI:
         return json.loads(req.get(url=self.api_url+'query', 
                                   params={'symbol': f'{symbol}',
                                           'function': 'TIME_SERIES_DAILY',
-                                          'apikey': f'{self.api_key()}'}).text)
+                                          'apikey': f'{self.api_key()}'}).text)['Time Series (Daily)']
 
     @property
     def api_url(self):
