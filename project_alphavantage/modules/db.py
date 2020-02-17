@@ -3,6 +3,8 @@ from sqlalchemy import Column, Float, ForeignKey, Index, Integer, Table, Text, t
 from sqlalchemy.sql.sqltypes import NullType
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 from project_alphavantage.config.base import (
     BASE_DIR
 )
@@ -11,6 +13,7 @@ SQLITE = 'sqlite'
 Base = declarative_base()
 metadata = Base.metadata
 
+
 class Stock(Base):
     __tablename__ = 'stock'
 
@@ -18,6 +21,14 @@ class Stock(Base):
     symbol = Column(Text, nullable=False)
     name = Column(Text, nullable=False)
     active = Column(Integer, nullable=False, server_default=text("1"))
+
+    @staticmethod
+    def get_all_active_stock():
+        Session = sessionmaker(bind=AlphaVantageDB(dbtype='sqlite', dbname='alphavantage').db_engine)
+        session = Session()
+        actives_stocks = session.query(Stock).filter(Stock.active == True).all()
+        session.close()
+        return actives_stocks
 
 
 class StockImport(Base):
@@ -29,8 +40,14 @@ class StockImport(Base):
     date = Column(Text, nullable=False)
     close = Column(Float, nullable=False, server_default=text("0"))
     stock_id = Column(ForeignKey('stock.id'), nullable=False)
-
     stock = relationship('Stock')
+    
+    def save_or_update_stock_imports(self, date: datetime.date, close: float, stock_id: int):
+        Session = sessionmaker(bind=AlphaVantageDB(dbtype='sqlite', dbname='alphavantage').db_engine)        
+        session = Session()
+        session.merge(StockImport(date=date, close=close, stock_id=stock_id))  
+        session.close()      
+
 
 class AlphaVantageDB(object):
     """
@@ -50,10 +67,6 @@ class AlphaVantageDB(object):
         dbtype = dbtype.lower()
         if dbtype in self.DB_ENGINE.keys():
             engine_url = self.DB_ENGINE[dbtype].format(DB=dbname, DB_PATH=dbpath)
-            self.db_engine = create_engine(engine_url)
-            print(self.db_engine)
-            print(engine_url)
+            self.db_engine = create_engine(engine_url)                        
         else:
             print("DBType is not found in DB_ENGINE")
-
-
